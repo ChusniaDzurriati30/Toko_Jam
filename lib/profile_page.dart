@@ -254,14 +254,21 @@ class _ProfilePageState extends State<ProfilePage> {
             ),
             const SizedBox(height: 20),
             Padding(
-              padding: const EdgeInsets.symmetric(
-                  horizontal: 20), // Adjust padding on the left and right sides
-              child: ElevatedButton(
-                onPressed: _saveUserData,
-                child: const Text('Save'),
-                style: ElevatedButton.styleFrom(
-                  minimumSize:
-                      Size(double.infinity, 50), // Set minimum button size
+              padding: const EdgeInsets.only(
+                  left: 55, right: 20), // Adjust left and right padding
+              child: Align(
+                alignment: Alignment.centerRight,
+                child: ElevatedButton(
+                  onPressed: _saveUserData,
+                  child: const Text('Save'),
+                  style: ElevatedButton.styleFrom(
+                    minimumSize: Size(double.infinity, 10),
+                    backgroundColor: Color(0xFFFE1AFD1),
+                    padding: EdgeInsets.symmetric(horizontal: 10, vertical: 20),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(7.0),
+                    ),
+                  ),
                 ),
               ),
             ),
