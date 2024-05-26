@@ -1,8 +1,7 @@
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:path/path.dart';
+import 'package:path/path.dart' as path_pkg;
 import 'package:sqflite/sqflite.dart';
 
 class User {
@@ -28,7 +27,7 @@ class DatabaseHelper {
 
   Future<void> initializeDatabase() async {
     String path = await getDatabasesPath();
-    path = join(path, 'profile_database.db');
+    path = path_pkg.join(path, 'profile_database.db');
     _database = await openDatabase(path, version: 1, onCreate: _createDatabase);
   }
 
@@ -59,6 +58,14 @@ class DatabaseHelper {
     }
     return null;
   }
+
+  Future<void> updateUser(User user) async {
+    await _database.update('users', user.toMap(), where: 'id = ?', whereArgs: [user.id]);
+  }
+
+  Future<void> deleteProfileImage(int id) async {
+    await _database.update('users', {'profileImage': ''}, where: 'id = ?', whereArgs: [id]);
+  }
 }
 
 class ProfilePage extends StatefulWidget {
@@ -72,7 +79,6 @@ class _ProfilePageState extends State<ProfilePage> {
   late String _profileImage = '';
   late DatabaseHelper _databaseHelper;
   final ImagePicker _imagePicker = ImagePicker();
-  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
   void initState() {
@@ -95,37 +101,112 @@ class _ProfilePageState extends State<ProfilePage> {
 
   _saveUserData() async {
     User user = User(
+      id: (await _databaseHelper.getUser())?.id,
       name: _nameController.text,
       phoneNumber: _phoneController.text,
       profileImage: _profileImage,
     );
-    await _databaseHelper.insertUser(user);
-    _showSnackBar('Data saved successfully!');
+    await _databaseHelper.updateUser(user);
+    _showSnackBar('Profil diperbarui!');
   }
 
-  Future<void> _changeProfileImage() async {
-    final XFile? pickedImage = await _imagePicker.pickImage(source: ImageSource.gallery);
-    if (pickedImage != null) {
-      setState(() {
-        _profileImage = pickedImage.path;
-      });
-    }
-  }
-
-void _showSnackBar(String message) {
-  var showSnackBar2 = ScaffoldMessenger.of(context as BuildContext).showSnackBar(
-    const SnackBar(content: Text("Login failed")),
+ Future<void> _changeProfileImage() async {
+  showModalBottomSheet(
+    context: context,
+    builder: (BuildContext context) {
+      return Column(
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: const [
+                Text(
+                  'Foto profil',
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                ),
+              ],
+            ),
+          ),
+          Divider(),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              Column(
+                children: [
+                  IconButton(
+                    icon: const Icon(Icons.camera_alt, size: 30),
+                    onPressed: () async {
+                      final XFile? pickedImage = await _imagePicker.pickImage(source: ImageSource.camera);
+                      if (pickedImage != null) {
+                        setState(() {
+                          _profileImage = pickedImage.path;
+                        });
+                        _showSnackBar('Profil diperbarui!');
+                      }
+                      Navigator.pop(context);
+                    },
+                  ),
+                  const Text('Kamera', style: TextStyle(fontSize: 16)),
+                ],
+              ),
+              Column(
+                children: [
+                  IconButton(
+                    icon: const Icon(Icons.photo, size: 30),
+                    onPressed: () async {
+                      final XFile? pickedImage = await _imagePicker.pickImage(source: ImageSource.gallery);
+                      if (pickedImage != null) {
+                        setState(() {
+                          _profileImage = pickedImage.path;
+                        });
+                        _showSnackBar('Profil diperbarui!');
+                      }
+                      Navigator.pop(context);
+                    },
+                  ),
+                  const Text('Galeri', style: TextStyle(fontSize: 16)),
+                ],
+              ),
+              Column(
+                children: [
+                  IconButton(
+                    icon: const Icon(Icons.delete, size: 30),
+                    onPressed: () async {
+                      User? user = await _databaseHelper.getUser();
+                      if (user != null) {
+                        await _databaseHelper.deleteProfileImage(user.id!);
+                        setState(() {
+                          _profileImage = '';
+                        });
+                        _showSnackBar('Gambar dihapus!');
+                      }
+                      Navigator.pop(context);
+                    },
+                  ),
+                  const Text('Hapus', style: TextStyle(fontSize: 16)),
+                ],
+              ),
+            ],
+          ),
+          SizedBox(height: 16),
+        ],
+      );
+    },
   );
-  var showSnackBar22 = showSnackBar2;
-  var showSnackBar = showSnackBar22;
 }
 
 
 
+
+  void _showSnackBar(String message) {
+    ScaffoldMessenger.of(context as BuildContext).showSnackBar(SnackBar(content: Text(message)));
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      key: _scaffoldKey,
       appBar: AppBar(
         title: const Text('Profile'),
       ),
@@ -133,14 +214,24 @@ void _showSnackBar(String message) {
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
-            GestureDetector(
-              onTap: _changeProfileImage,
-              child: CircleAvatar(
-                radius: 50,
-                backgroundImage: _profileImage.isNotEmpty
-                    ? FileImage(File(_profileImage))
-                    : const AssetImage('assets/images/chusnia.jpg') as ImageProvider,
-              ),
+            Stack(
+              children: [
+                CircleAvatar(
+                  radius: 50,
+                  backgroundImage: _profileImage.isNotEmpty
+                      ? FileImage(File(_profileImage))
+                      : const AssetImage('assets/placeholder.png') as ImageProvider,
+                ),
+                Positioned(
+                  bottom: -10,
+                  right: -10,
+                  child: IconButton(
+                    iconSize: 30.0,
+                    icon: const Icon(Icons.camera_alt),
+                    onPressed: _changeProfileImage,
+                  ),
+                ),
+              ],
             ),
             const SizedBox(height: 20),
             TextField(
@@ -161,9 +252,7 @@ void _showSnackBar(String message) {
             ),
             const SizedBox(height: 20),
             ElevatedButton(
-              onPressed: () {
-                _saveUserData();
-              },
+              onPressed: _saveUserData,
               child: const Text('Save'),
             ),
           ],
@@ -171,4 +260,8 @@ void _showSnackBar(String message) {
       ),
     );
   }
+}
+
+void main() {
+  runApp(MaterialApp(home: ProfilePage()));
 }
