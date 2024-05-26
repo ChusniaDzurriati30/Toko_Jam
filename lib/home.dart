@@ -19,7 +19,7 @@ class Home extends StatelessWidget {
           _scaffoldKey.currentState!.openDrawer();
         },
       ),
-      title: Text('Toko Nia Cantik'),
+      title: Text('Chusnia Elite Watches'),
       actions: <Widget>[
         IconButton(
           icon: Icon(Icons.arrow_back),

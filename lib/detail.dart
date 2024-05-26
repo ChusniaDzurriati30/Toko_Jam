@@ -12,7 +12,7 @@ class Detail extends StatelessWidget {
   Widget build(BuildContext context) {
     final appBar = AppBar(
       elevation: .5,
-      title: Text('Chusnia Clock'),
+      title: Text('Chusnia Elite Watches'),
       actions: <Widget>[],
     );
 
