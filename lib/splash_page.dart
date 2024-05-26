@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'home.dart';
 
+
+
 class SplashPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -17,10 +19,11 @@ class SplashPage extends StatelessWidget {
                 style: TextStyle(
                   fontSize: 24,
                   fontWeight: FontWeight.bold,
+                  fontFamily: 'Raleway',
                 ),
               ),
               SizedBox(height: 20),
-              Image.asset('assets/images/CLOCK.PNG', height: 400),
+              Image.asset('assets/images/jam4.png', height: 400),
               SizedBox(height: 20),
               Text(
                 'Welcome to\nThe Chusnia Store!',
@@ -28,6 +31,7 @@ class SplashPage extends StatelessWidget {
                 style: TextStyle(
                   fontSize: 24,
                   fontWeight: FontWeight.bold,
+                  fontFamily: 'Raleway',
                 ),
               ),
               SizedBox(height: 10),
@@ -37,6 +41,7 @@ class SplashPage extends StatelessWidget {
                 style: TextStyle(
                   fontSize: 16,
                   color: Colors.grey,
+                  fontFamily: 'Raleway',
                 ),
               ),
             ],
@@ -52,15 +57,17 @@ class SplashPage extends StatelessWidget {
                   );
                 },
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Color(0xFFFFE6E6), // Set the background color here
+                  backgroundColor: Color(0xFFFE1AFD1), 
+                  padding: EdgeInsets.symmetric(horizontal: 50, vertical: 10),
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20.0),
+                    borderRadius: BorderRadius.circular(10.0),
                   ),
                 ),
                 child: Text(
                   'Start',
                   style: TextStyle(
                     fontSize: 25,
+                    fontFamily: 'Raleway',
                   ),
                 ),
               ),
