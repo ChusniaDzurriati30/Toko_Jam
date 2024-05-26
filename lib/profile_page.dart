@@ -10,7 +10,11 @@ class User {
   final String phoneNumber;
   final String profileImage;
 
-  User({this.id, required this.name, required this.phoneNumber, required this.profileImage});
+  User(
+      {this.id,
+      required this.name,
+      required this.phoneNumber,
+      required this.profileImage});
 
   Map<String, dynamic> toMap() {
     return {
@@ -47,7 +51,8 @@ class DatabaseHelper {
   }
 
   Future<User?> getUser() async {
-    List<Map<String, dynamic>> maps = await _database.query('users', orderBy: 'id DESC', limit: 1);
+    List<Map<String, dynamic>> maps =
+        await _database.query('users', orderBy: 'id DESC', limit: 1);
     if (maps.isNotEmpty) {
       return User(
         id: maps[0]['id'],
@@ -60,11 +65,13 @@ class DatabaseHelper {
   }
 
   Future<void> updateUser(User user) async {
-    await _database.update('users', user.toMap(), where: 'id = ?', whereArgs: [user.id]);
+    await _database
+        .update('users', user.toMap(), where: 'id = ?', whereArgs: [user.id]);
   }
 
   Future<void> deleteProfileImage(int id) async {
-    await _database.update('users', {'profileImage': ''}, where: 'id = ?', whereArgs: [id]);
+    await _database.update('users', {'profileImage': ''},
+        where: 'id = ?', whereArgs: [id]);
   }
 }
 
@@ -110,98 +117,78 @@ class _ProfilePageState extends State<ProfilePage> {
     _showSnackBar('Profil diperbarui!');
   }
 
- Future<void> _changeProfileImage() async {
-  showModalBottomSheet(
-    context: context,
-    builder: (BuildContext context) {
-      return Column(
-        mainAxisSize: MainAxisSize.min,
-        children: <Widget>[
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: const [
-                Text(
-                  'Foto profil',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                ),
+  Future<void> _changeProfileImage() async {
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+        return Column(
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: const [
+                  Text(
+                    'Foto profil',
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
+                ],
+              ),
+            ),
+            Divider(),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                _buildImageButton(
+                    Icons.camera_alt, 'Kamera', ImageSource.camera),
+                _buildImageButton(Icons.photo, 'Galeri', ImageSource.gallery),
+                _buildImageButton(Icons.delete, 'Hapus', null),
               ],
             ),
-          ),
-          Divider(),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              Column(
-                children: [
-                  IconButton(
-                    icon: const Icon(Icons.camera_alt, size: 30),
-                    onPressed: () async {
-                      final XFile? pickedImage = await _imagePicker.pickImage(source: ImageSource.camera);
-                      if (pickedImage != null) {
-                        setState(() {
-                          _profileImage = pickedImage.path;
-                        });
-                        _showSnackBar('Profil diperbarui!');
-                      }
-                      Navigator.pop(context);
-                    },
-                  ),
-                  const Text('Kamera', style: TextStyle(fontSize: 16)),
-                ],
-              ),
-              Column(
-                children: [
-                  IconButton(
-                    icon: const Icon(Icons.photo, size: 30),
-                    onPressed: () async {
-                      final XFile? pickedImage = await _imagePicker.pickImage(source: ImageSource.gallery);
-                      if (pickedImage != null) {
-                        setState(() {
-                          _profileImage = pickedImage.path;
-                        });
-                        _showSnackBar('Profil diperbarui!');
-                      }
-                      Navigator.pop(context);
-                    },
-                  ),
-                  const Text('Galeri', style: TextStyle(fontSize: 16)),
-                ],
-              ),
-              Column(
-                children: [
-                  IconButton(
-                    icon: const Icon(Icons.delete, size: 30),
-                    onPressed: () async {
-                      User? user = await _databaseHelper.getUser();
-                      if (user != null) {
-                        await _databaseHelper.deleteProfileImage(user.id!);
-                        setState(() {
-                          _profileImage = '';
-                        });
-                        _showSnackBar('Gambar dihapus!');
-                      }
-                      Navigator.pop(context);
-                    },
-                  ),
-                  const Text('Hapus', style: TextStyle(fontSize: 16)),
-                ],
-              ),
-            ],
-          ),
-          SizedBox(height: 16),
-        ],
-      );
-    },
-  );
-}
+            SizedBox(height: 16),
+          ],
+        );
+      },
+    );
+  }
 
-
-
+  Widget _buildImageButton(IconData icon, String label, ImageSource? source) {
+    return Column(
+      children: [
+        IconButton(
+          icon: Icon(icon, size: 30),
+          onPressed: () async {
+            if (source != null) {
+              final XFile? pickedImage =
+                  await _imagePicker.pickImage(source: source);
+              if (pickedImage != null) {
+                setState(() {
+                  _profileImage = pickedImage.path;
+                });
+                _showSnackBar('Profil diperbarui!');
+              }
+            } else {
+              User? user = await _databaseHelper.getUser();
+              if (user != null) {
+                await _databaseHelper.deleteProfileImage(user.id!);
+                setState(() {
+                  _profileImage = '';
+                });
+                _showSnackBar('Gambar dihapus!');
+              }
+            }
+            Navigator.pop(context);
+          },
+        ),
+        Text(label, style: TextStyle(fontSize: 16)),
+      ],
+    );
+  }
 
   void _showSnackBar(String message) {
-    ScaffoldMessenger.of(context as BuildContext).showSnackBar(SnackBar(content: Text(message)));
+    ScaffoldMessenger.of(context as BuildContext)
+        .showSnackBar(SnackBar(content: Text(message)));
   }
 
   @override
@@ -220,7 +207,8 @@ class _ProfilePageState extends State<ProfilePage> {
                   radius: 50,
                   backgroundImage: _profileImage.isNotEmpty
                       ? FileImage(File(_profileImage))
-                      : const AssetImage('assets/placeholder.png') as ImageProvider,
+                      : const AssetImage('assets/placeholder.png')
+                          as ImageProvider,
                 ),
                 Positioned(
                   bottom: -10,
@@ -234,26 +222,48 @@ class _ProfilePageState extends State<ProfilePage> {
               ],
             ),
             const SizedBox(height: 20),
-            TextField(
-              controller: _nameController,
-              decoration: const InputDecoration(
-                labelText: 'Nama',
-                border: OutlineInputBorder(),
+            ListTile(
+              leading: const Icon(Icons.person),
+              title: const Text(
+                'Nama',
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+              subtitle: TextField(
+                controller: _nameController,
+                decoration: const InputDecoration(
+                  hintText: 'Chusnia Dzurriati',
+                  border: OutlineInputBorder(),
+                ),
               ),
             ),
             const SizedBox(height: 20),
-            TextField(
-              controller: _phoneController,
-              decoration: const InputDecoration(
-                labelText: 'Nomor HP',
-                border: OutlineInputBorder(),
+            ListTile(
+              leading: const Icon(Icons.phone),
+              title: const Text(
+                'Telepon',
+                style: TextStyle(fontWeight: FontWeight.bold),
               ),
-              keyboardType: TextInputType.phone,
+              subtitle: TextField(
+                controller: _phoneController,
+                decoration: const InputDecoration(
+                  hintText: '+62 857-4757-9309',
+                  border: OutlineInputBorder(),
+                ),
+                keyboardType: TextInputType.phone,
+              ),
             ),
             const SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: _saveUserData,
-              child: const Text('Save'),
+            Padding(
+              padding: const EdgeInsets.symmetric(
+                  horizontal: 20), // Adjust padding on the left and right sides
+              child: ElevatedButton(
+                onPressed: _saveUserData,
+                child: const Text('Save'),
+                style: ElevatedButton.styleFrom(
+                  minimumSize:
+                      Size(double.infinity, 50), // Set minimum button size
+                ),
+              ),
             ),
           ],
         ),
