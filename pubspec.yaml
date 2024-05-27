@@ -29,12 +29,12 @@ environment:
 # versions available, run `flutter pub outdated`.
 dependencies:
 
-
   flutter:
     sdk: flutter
   url_launcher: ^6.0.6
   sqflite: ^2.0.0
   image_picker: ^0.8.4+3
+  carousel_slider: ^4.0.0
  
  
 
@@ -88,6 +88,7 @@ flutter:
     - assets/images/jam2.png
     - assets/images/jam3.png
     - assets/images/jam4.png
+
 
 
 

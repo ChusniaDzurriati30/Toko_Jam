@@ -1,10 +1,10 @@
+
 import 'package:flutter/material.dart';
 import 'data.dart';
 import 'detail.dart';
 import 'home.dart';
 import 'splash_page.dart';
 import 'profile_page.dart';
-
 
 void main() => runApp(MyApp());
 
@@ -26,10 +26,10 @@ class MyApp extends StatelessWidget {
   Route<dynamic> generateRoute(RouteSettings settings) {
     final path = settings.name!.split('/');
     final title = path[1];   
-      Jam jam = jams.firstWhere((it) => it.title == title);
-      return MaterialPageRoute(
-        settings: settings,
-        builder: (context) => Detail(jam),
-      );
+    Jam jam = jams.firstWhere((it) => it.title == title);
+    return MaterialPageRoute(
+      settings: settings,
+      builder: (context) => Detail(jam),
+    );
   }
 }

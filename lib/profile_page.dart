@@ -107,13 +107,18 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   _saveUserData() async {
+    User? existingUser = await _databaseHelper.getUser();
     User user = User(
-      id: (await _databaseHelper.getUser())?.id,
+      id: existingUser?.id,
       name: _nameController.text,
       phoneNumber: _phoneController.text,
       profileImage: _profileImage,
     );
-    await _databaseHelper.updateUser(user);
+    if (existingUser != null) {
+      await _databaseHelper.updateUser(user);
+    } else {
+      await _databaseHelper.insertUser(user);
+    }
     _showSnackBar('Profil diperbarui!');
   }
 
@@ -187,7 +192,7 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   void _showSnackBar(String message) {
-    ScaffoldMessenger.of(context as BuildContext)
+    ScaffoldMessenger.of(context)
         .showSnackBar(SnackBar(content: Text(message)));
   }
 
@@ -195,7 +200,7 @@ class _ProfilePageState extends State<ProfilePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Profile'),
+        title: const Text('Complete Your Profile'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -221,7 +226,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 ),
               ],
             ),
-            const SizedBox(height: 20),
+            const SizedBox(height: 3),
             ListTile(
               leading: const Icon(Icons.person),
               title: const Text(
@@ -236,7 +241,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 ),
               ),
             ),
-            const SizedBox(height: 20),
+            const SizedBox(height: 3),
             ListTile(
               leading: const Icon(Icons.phone),
               title: const Text(
@@ -252,19 +257,18 @@ class _ProfilePageState extends State<ProfilePage> {
                 keyboardType: TextInputType.phone,
               ),
             ),
-            const SizedBox(height: 20),
+            const SizedBox(height: 10),
             Padding(
-              padding: const EdgeInsets.only(
-                  left: 55, right: 20), // Adjust left and right padding
+              padding: const EdgeInsets.only(left: 55, right: 20),
               child: Align(
                 alignment: Alignment.centerRight,
                 child: ElevatedButton(
                   onPressed: _saveUserData,
-                  child: const Text('Save'),
+                  child: const Text('Complite Profile'),
                   style: ElevatedButton.styleFrom(
-                    minimumSize: Size(double.infinity, 10),
+                    minimumSize: Size(double.infinity, 10), 
                     backgroundColor: Color(0xFFFE1AFD1),
-                    padding: EdgeInsets.symmetric(horizontal: 10, vertical: 20),
+                    padding: EdgeInsets.symmetric(horizontal: 10, vertical: 8),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(7.0),
                     ),
