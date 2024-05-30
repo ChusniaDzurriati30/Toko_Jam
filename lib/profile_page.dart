@@ -119,7 +119,7 @@ class _ProfilePageState extends State<ProfilePage> {
     } else {
       await _databaseHelper.insertUser(user);
     }
-    _showSnackBar('Profil diperbarui!');
+    _showSnackBar('Diperbarui!');
   }
 
   Future<void> _changeProfileImage() async {
@@ -203,7 +203,7 @@ class _ProfilePageState extends State<ProfilePage> {
         title: const Text('Complete Your Profile'),
       ),
       body: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(14.0),
         child: Column(
           children: [
             Stack(
@@ -286,3 +286,4 @@ class _ProfilePageState extends State<ProfilePage> {
 void main() {
   runApp(MaterialApp(home: ProfilePage()));
 }
+

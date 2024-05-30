@@ -1,14 +1,22 @@
 class Jam {
-  String title,
-      writer,
-      price,
-      image,
-      description =
-    'Selamat datang di koleksi jam tangan premium kami. Temukan berbagai macam jam tangan dari merek-merek ternama dunia. Setiap jam tangan kami dirancang dengan keahlian terbaik dan bahan berkualitas tinggi untuk memberikan ketepatan waktu yang sempurna dan gaya yang elegan. \n\nApakah Anda mencari jam tangan klasik untuk acara formal atau jam tangan sporty untuk aktivitas sehari-hari, kami memiliki pilihan yang sesuai untuk Anda. Setiap model dilengkapi dengan fitur-fitur inovatif yang memadukan fungsi dan desain. \n\nNikmati pengalaman berbelanja yang menyenangkan dengan layanan pelanggan terbaik dan jaminan kepuasan dari kami. Pilih jam tangan yang mencerminkan kepribadian Anda dan tingkatkan penampilan Anda dengan koleksi kami. \n\nKunjungi toko kami dan temukan jam tangan impian Anda. Terima kasih telah mempercayakan kebutuhan jam tangan Anda kepada kami.';
+  String title;
+  String writer;
+  String price;
+  String image;
+  String description;
   double rating;
   int _sold;
 
-  Jam(this.title, this.writer, this.price, this.image, this.rating, this._sold);
+  Jam(
+    this.title,
+    this.writer,
+    this.price,
+    this.image,
+    this.rating,
+    this._sold, {
+    this.description =
+      'Selamat datang di koleksi jam tangan premium kami. Temukan berbagai macam jam tangan dari merek-merek ternama dunia. Setiap jam tangan kami dirancang dengan keahlian terbaik dan bahan berkualitas tinggi untuk memberikan ketepatan waktu yang sempurna dan gaya yang elegan. \n\nApakah Anda mencari jam tangan klasik untuk acara formal atau jam tangan sporty untuk aktivitas sehari-hari, kami memiliki pilihan yang sesuai untuk Anda. Setiap model dilengkapi dengan fitur-fitur inovatif yang memadukan fungsi dan desain. \n\nNikmati pengalaman berbelanja yang menyenangkan dengan layanan pelanggan terbaik dan jaminan kepuasan dari kami. Pilih jam tangan yang mencerminkan kepribadian Anda dan tingkatkan penampilan Anda dengan koleksi kami. \n\nKunjungi toko kami dan temukan jam tangan impian Anda. Terima kasih telah mempercayakan kebutuhan jam tangan Anda kepada kami.',
+  });
 
   int get sold => _sold;
 
@@ -16,6 +24,8 @@ class Jam {
     _sold = newSold;
   }
 }
+
+List<Jam> favoriteJams = [];
 
 final List<Jam> jams = [
   Jam('Rolex Submariner', 'Rolex', '\$8,276.00', 'assets/images/1.jpeg', 4.8, 5400),
