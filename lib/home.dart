@@ -1,9 +1,10 @@
+import 'package:Toko_Jam/profile_page.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'data.dart';
 import 'detail.dart';
-import 'profile_page.dart';
+import 'voucher_page.dart';
 import 'favorite_provider.dart';
 import 'splash_page.dart';
 
@@ -19,7 +20,7 @@ class _HomeState extends State<Home> {
   final List<Widget> _pages = [
     HomePage(),
     FavoritePage(),
-    ProfilePage(),
+    VoucherPage(),
   ];
 
   void _onItemTapped(int index) {
@@ -40,19 +41,11 @@ class _HomeState extends State<Home> {
               },
             )
           : null,
-      actions: _selectedIndex != 2
-          ? <Widget>[
-              IconButton(
-                icon: Icon(Icons.arrow_back),
-                onPressed: () {
-                  Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(builder: (context) => SplashPage()),
-                  );
-                },
-              ),
-            ]
-          : null,
+      title: _selectedIndex == 0
+          ? Text('Elite Watches')
+          : _selectedIndex == 1
+              ? Text('Favorite')
+              : Text('Voucher'),
     );
 
     return Scaffold(
@@ -71,7 +64,7 @@ class _HomeState extends State<Home> {
             label: '',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.person),
+            icon: Icon(Icons.loyalty),
             label: '',
           ),
         ],
@@ -82,7 +75,7 @@ class _HomeState extends State<Home> {
         showSelectedLabels: false,
         showUnselectedLabels: false,
       ),
-      drawer: _selectedIndex != 2
+      drawer: _selectedIndex != 3
           ? Drawer(
               child: ListView(
                 padding: EdgeInsets.zero,
@@ -103,7 +96,7 @@ class _HomeState extends State<Home> {
                     leading: Icon(Icons.person),
                     title: Text('Profile'),
                     onTap: () {
-                      Navigator.push(
+                      var push = Navigator.push(
                         context,
                         MaterialPageRoute(builder: (context) => ProfilePage()),
                       );
@@ -192,10 +185,10 @@ class HomePage extends StatelessWidget {
     );
 
     final List<Jam> discountJams = [
-      Jam('Rolex Submariner', 'Rolex', '\$8,276.00', 'assets/images/1.jpeg', 4.8, 5400),
-      Jam('Omega Speedmaster', 'Omega', '\$5,172.41', 'assets/images/2.jpeg', 4.7, 10000),
-      Jam('Tag Heuer Carrera', 'Tag Heuer', '\$4,482.76', 'assets/images/3.jpeg', 4.5, 3100),
-      Jam('Seiko Prospex', 'Seiko', '\$1,379.31', 'assets/images/4.jpeg', 4.3, 754),
+      Jam('Rolex Submariner', 'Rolex', '\$4,276.00', 'assets/images/1.jpeg', 4.8, 5400),
+      Jam('Omega Speedmaster', 'Omega', '\$2,172.41', 'assets/images/2.jpeg', 4.7, 10000),
+      Jam('Tag Heuer Carrera', 'Tag Heuer', '\$2,482.76', 'assets/images/3.jpeg', 4.5, 3100),
+      Jam('Seiko Prospex', 'Seiko', '\$379.31', 'assets/images/4.jpeg', 4.3, 754),
     ];
 
     return ListView(
@@ -370,6 +363,61 @@ class FavoritePage extends StatelessWidget {
               ),
             );
           },
+        );
+      },
+    );
+  }
+}
+class VoucherPage extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    final List<Jam> allJams = jams;
+
+    return ListView.builder(
+      itemCount: allJams.length,
+      itemBuilder: (context, index) {
+        final jam = allJams[index];
+        return Card(
+          margin: EdgeInsets.all(16.0),
+          child: ListTile(
+            leading: Image.asset(jam.image, fit: BoxFit.cover, width: 50, height: 50),
+            title: Text(jam.title),
+            subtitle: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(jam.price, style: TextStyle(color: Colors.orange)),
+                Text('${jam.sold} terjual'),
+              ],
+            ),
+            trailing: ElevatedButton(
+              onPressed: () {
+                showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return AlertDialog(
+                      title: Text('Voucher Claimed'),
+                      content: Text('You have successfully claimed the voucher for ${jam.title}.'),
+                      actions: [
+                        TextButton(
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                          },
+                          child: Text('OK'),
+                        ),
+                      ],
+                    );
+                  },
+                );
+              },
+              child: Text('Use Voucher'),
+            ),
+            onTap: () {
+              Navigator.push(
+                context,
+               MaterialPageRoute(builder: (context) => Detail(jam)),
+              );
+            },
+          ),
         );
       },
     );
